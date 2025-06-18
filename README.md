@@ -8,3 +8,6 @@ Configured an IAM role for an AWS Lambda function and set the role permissions.
 
 lab 2
 
+Created and configured a DynamoDB table to store customers’ metadata.
+Created an SNS topic for the application notifications and subscribed to the topic.
+Configured the IAM role to allow permissions for the DynamoDB table and SNS topic
