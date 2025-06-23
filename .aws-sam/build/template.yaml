@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-kyc
+
+  Sample SAM Template for sam-kyc
+
+  '
+Resources:
+  DocumentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: documentbucket-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  DocumentBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: DocumentBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Action: s3:*
+          Effect: Deny
+          Resource:
+          - Fn::Sub: arn:aws:s3:::${DocumentBucket}
+          - Fn::Sub: arn:aws:s3:::${DocumentBucket}/*
+          Principal: '*'
+          Condition:
+            Bool:
+              aws:SecureTransport:
+              - false
+  ApplicationStatusTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: ApplicationNotifications
+      TopicName: ApplicationNotifications
+      KmsMasterKeyId: alias/aws/sns
+  CustomerDDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      AttributeDefinitions:
+      - AttributeName: APP_UUID
+        AttributeType: S
+      KeySchema:
+      - AttributeName: APP_UUID
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+      TableName: CustomerMetadataTable
+  DDBWriteAutoScaling:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: CustomerDDBTable
+    Properties:
+      MaxCapacity: 20
+      MinCapacity: 2
+      ResourceId: table/CustomerMetadataTable
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      ServiceNamespace: dynamodb
+  DDBReadAutoScaling:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: CustomerDDBTable
+    Properties:
+      MaxCapacity: 20
+      MinCapacity: 2
+      ResourceId: table/CustomerMetadataTable
+      RoleARN:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      ServiceNamespace: dynamodb
+  TableWriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: WriteAutoScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId:
+        Ref: DDBWriteAutoScaling
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70
+        ScaleInCooldown: 2
+        ScaleOutCooldown: 2
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization
+  TableReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: ReadAutoScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId:
+        Ref: DDBReadAutoScaling
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70
+        ScaleInCooldown: 2
+        ScaleOutCooldown: 2
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+  DocumentLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DocumentLambdaFunction
+      Role:
+        Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/DocumentLambdaRole
+      CodeUri: DocumentLambdaFunction
+      Handler: app.lambda_handler
+      Timeout: 20
+      Runtime: python3.12
+      Environment:
+        Variables:
+          TABLE:
+            Ref: CustomerDDBTable
+          TOPIC:
+            Fn::GetAtt:
+            - ApplicationStatusTopic
+            - TopicArn
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: DocumentBucket
+            Events: s3:ObjectCreated:Put
+            Filter:
+              S3Key:
+                Rules:
+                - Name: prefix
+                  Value: zipped/
+    Metadata:
+      SamResourceId: DocumentLambdaFunction
