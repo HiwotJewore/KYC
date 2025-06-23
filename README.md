@@ -1,82 +1,87 @@
+## ✅ Lab Progress
 
-# 🔐 Know Your Customer (KYC) Onboarding Application
+### ✅ Lab 1 - Setup S3 Bucket and Lambda Function
 
-This project is part of a capstone assignment for the **Cloud Application Developer** program at **Amazon Cloud Institute**. It simulates a real-world, serverless customer onboarding solution for **AnyCompany Bank**, focusing on **security**, **scalability**, and **automation** using AWS services.
+**Goal:**  
+Create a secure Amazon S3 bucket to store customer documents and deploy an AWS Lambda function to process onboarding events.
 
----
+**Description:**  
+Set up an S3 bucket with enforced HTTPS-only access for secure document storage. Developed a Lambda function triggered by S3 events to start processing uploaded customer documents.
 
-## 👩🏾‍💻 Project Role
-Cloud Application Developer at AnyCompany Bank
-
----
-
-## 🎯 Objective
-To streamline the **KYC (Know Your Customer)** onboarding process using a fully serverless architecture on AWS, ensuring customer documentation is processed **securely and efficiently**.
-
----
-
-## 🛠️ Key AWS Services Used
-- **Amazon S3** – Secure document storage with enforced HTTPS access only.
-- **AWS Lambda** – Serverless compute to process onboarding tasks.
-- **IAM Roles & Policies** – Secure permissions for Lambda and S3.
-- *(Future labs may include Amazon Textract, Rekognition, SNS, API Gateway, SQS, etc.)*
+**Expected Outcome:**  
+- Secure storage for onboarding documents.  
+- Event-driven processing setup using Lambda.  
+- Initial integration between S3 and Lambda validated.
 
 ---
 
-## 📂 Project Files
-- `lambda_function.py` – AWS Lambda handler to process events (e.g., file uploads).
-- `8d247914_details.csv` – Sample customer data for onboarding.
-- `README.md` – Project overview and documentation.
+### ✅ Lab 2 - DynamoDB and SNS Setup
+
+**Goal:**  
+Store customer metadata securely in DynamoDB and set up notification using SNS.
+
+**Description:**  
+Created a DynamoDB table for customer metadata storage. Set up an SNS topic for onboarding notifications and subscribed with an email to receive alerts on customer events.
+
+**Expected Outcome:**  
+- Reliable storage of onboarding metadata.  
+- Real-time notifications to stakeholders via SNS.
 
 ---
 
-<details>
-<summary>✅ Lab Progress</summary>
+### ✅ Lab 3 - Lambda Function to Unzip and Parse Files
 
-### ✅ Lab 1
-- Created and secured an Amazon S3 bucket for customer documents.
-- Wrote and uploaded a Lambda function.
-- Configured IAM roles and permissions for secure access.
-- Documented setup steps and tested integration between services.
+**Goal:**  
+Process uploaded `.zip` files by extracting and parsing customer documents.
 
-### ✅ Lab 2
-- Created DynamoDB table to store customer metadata.
-- Created SNS topic for onboarding notifications.
-- Subscribed to SNS with an email address.
-- Updated IAM policies to allow access to DynamoDB and SNS.
+**Description:**  
+Enhanced the Lambda function to unzip `.zip` files upon upload to S3, upload extracted contents to a dedicated S3 prefix, and parse filenames (like app_uuid, selfie, license) for logging and downstream processing.
 
-### ✅ Lab 3
-- Built `DocumentLambdaFunction` triggered by `.zip` uploads to S3.
-- Extracted and uploaded unzipped files to `unzipped/` prefix.
-- Parsed and logged file names (e.g., app_uuid, selfie, license) to CloudWatch Logs.
-
-### ✅ Lab 4
-- Parsed customer metadata from `.csv` file inside the `.zip`.
-- Stored metadata in DynamoDB.
-- Prepared inputs for text extraction and identity matching in future labs.
-
-### 🧪 Planned: Lab 5
-- Integrate Amazon Textract for license info extraction.
-- Compare extracted data with CSV for accuracy.
-
-
-### 🧪 Planned: Lab 6
-- Use Amazon Rekognition to verify face match between selfie and license photo.
-
-### 🧪 Planned: Lab 7
-- Use Amazon SQS for async third-party driver’s license validation.
-- Send SNS notifications with final onboarding result.
-
-</details>
+**Expected Outcome:**  
+- Automated extraction of compressed onboarding documents.  
+- Proper organization of files in S3.  
+- Metadata available for next processing steps.
 
 ---
 
-## 📌 Notes
-- **Do not use real customer data** – This project is for educational purposes only.
-- Future labs will expand functionality with additional AWS AI/ML services and automation tools.
+### ✅ Lab 4 - Parse Customer Metadata from CSV
+
+**Goal:**  
+Extract customer metadata from CSV files and store it in DynamoDB.
+
+**Description:**  
+Implemented parsing of CSV files inside the uploaded `.zip` to retrieve customer details such as name, DOB, and document number, then stored this information in the DynamoDB table.
+
+**Expected Outcome:**  
+- Structured metadata ingestion.  
+- Customer details persisted for KYC processing.
 
 ---
 
-## 📚 License
-© 2025 Amazon Web Services, Inc. All rights reserved. For educational use only.
->>>>>>> 9b6e301e8e0b02facb2431a02711e19007f4b7ba
+### ✅ Lab 5 - Integrate Amazon Textract for License Data Extraction
+
+**Goal:**  
+Use Amazon Textract to extract driver’s license information from uploaded documents.
+
+**Description:**  
+Integrated Amazon Textract’s AnalyzeID API to automatically extract and analyze license data from uploaded images. Compared extracted data with CSV records for validation.
+
+**Expected Outcome:**  
+- Automated extraction of identity information.  
+- Improved accuracy by cross-checking with CSV data.
+
+---
+
+### ✅ Lab 6 – Textract Analysis, SNS Notification, and DynamoDB Update
+Goal:
+Leverage AWS SDK to analyze ID documents, notify stakeholders via SNS, and update customer metadata in DynamoDB.
+
+Highlights:
+
+Configured IAM role with textract:AnalyzeID permissions.
+
+Used Boto3 to perform Textract analysis on license images.
+
+Published onboarding results to an SNS topic.
+
+Updated customer records in DynamoDB based on extracted ID details.
