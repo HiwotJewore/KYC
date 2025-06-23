@@ -1,19 +1,4 @@
-<<<<<<< HEAD
-         ___        ______     ____ _                 _  ___  
-        / \ \      / / ___|   / ___| | ___  _   _  __| |/ _ \ 
-       / _ \ \ /\ / /\___ \  | |   | |/ _ \| | | |/ _` | (_) |
-      / ___ \ V  V /  ___) | | |___| | (_) | |_| | (_| |\__, |
-     /_/   \_\_/\_/  |____/   \____|_|\___/ \__,_|\__,_|  /_/ 
- ----------------------------------------------------------------- 
 
-
-Hi there! Welcome to AWS Cloud9!
-
-To get started, create some files, play with the terminal,
-or visit https://docs.aws.amazon.com/console/cloud9/ for our documentation.
-
-Happy coding!
-=======
 # 🔐 Know Your Customer (KYC) Onboarding Application
 
 This project is part of a capstone assignment for the **Cloud Application Developer** program at **Amazon Cloud Institute**. It simulates a real-world, serverless customer onboarding solution for **AnyCompany Bank**, focusing on **security**, **scalability**, and **automation** using AWS services.
