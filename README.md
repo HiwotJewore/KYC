@@ -1,171 +1,302 @@
-## ✅ Lab Progress
 
-### ✅ Lab 1 - Setup S3 Bucket and Lambda Function
-
-**Goal:**  
-Create a secure Amazon S3 bucket to store customer documents and deploy an AWS Lambda function to process onboarding events.
-
-**Description:**  
-Set up an S3 bucket with enforced HTTPS-only access for secure document storage. Developed a Lambda function triggered by S3 events to start processing uploaded customer documents.
-
-**Expected Outcome:**  
-- Secure storage for onboarding documents.  
-- Event-driven processing setup using Lambda.  
-- Initial integration between S3 and Lambda validated.
+# 🔐 Know Your Customer (KYC) Onboarding Application  
+*Capstone project for AWS Cloud Application Developer program*  
 
 ---
 
-### ✅ Lab 2 - DynamoDB and SNS Setup
+## Project Overview
 
-**Goal:**  
-Store customer metadata securely in DynamoDB and set up notification using SNS.
+This repository contains the code and documentation for the **KYC onboarding solution** built as part of the Amazon Cloud Institute’s Cloud Application Developer course. The project simulates a real-world, serverless customer onboarding system for **AnyCompany Bank**, leveraging AWS services to ensure **security**, **scalability**, and **automation**.
 
-**Description:**  
-Created a DynamoDB table for customer metadata storage. Set up an SNS topic for onboarding notifications and subscribed with an email to receive alerts on customer events.
-
-**Expected Outcome:**  
-- Reliable storage of onboarding metadata.  
-- Real-time notifications to stakeholders via SNS.
+The solution evolves across multiple labs, from setting up storage and Lambda functions to integrating AI-powered identity verification and preparing asynchronous workflows.
 
 ---
 
-### ✅ Lab 3 - Lambda Function to Unzip and Parse Files
+## Lab Progress
+
+### ✅ Lab 1 – Setup S3 Bucket and Lambda Function
 
 **Goal:**  
-Process uploaded `.zip` files by extracting and parsing customer documents.
+Create a secure Amazon S3 bucket to store customer documents and deploy a Lambda function to process onboarding events.
 
 **Description:**  
-Enhanced the Lambda function to unzip `.zip` files upon upload to S3, upload extracted contents to a dedicated S3 prefix, and parse filenames (like app_uuid, selfie, license) for logging and downstream processing.
+Configured an S3 bucket with HTTPS-only access and created a Lambda function triggered by S3 events to start processing uploaded documents.
 
 **Expected Outcome:**  
-- Automated extraction of compressed onboarding documents.  
-- Proper organization of files in S3.  
-- Metadata available for next processing steps.
+- Secure document storage  
+- Event-driven processing with Lambda  
+- Verified integration between S3 and Lambda  
 
 ---
 
-### ✅ Lab 4 - Parse Customer Metadata from CSV
+### ✅ Lab 2 – DynamoDB and SNS Setup
 
 **Goal:**  
-Extract customer metadata from CSV files and store it in DynamoDB.
+Store customer metadata securely in DynamoDB and set up notifications using SNS.
 
 **Description:**  
-Implemented parsing of CSV files inside the uploaded `.zip` to retrieve customer details such as name, DOB, and document number, then stored this information in the DynamoDB table.
+Created a DynamoDB table for customer metadata and an SNS topic to notify stakeholders about onboarding events.
 
 **Expected Outcome:**  
-- Structured metadata ingestion.  
-- Customer details persisted for KYC processing.
+- Reliable metadata storage  
+- Real-time notifications via SNS  
 
 ---
 
-### ✅ Lab 5 - Integrate Amazon Textract for License Data Extraction
+### ✅ Lab 3 – Lambda Function to Unzip and Parse Files
 
 **Goal:**  
-Use Amazon Textract to extract driver’s license information from uploaded documents.
+Process `.zip` files by extracting and parsing customer documents.
 
 **Description:**  
-Integrated Amazon Textract’s AnalyzeID API to automatically extract and analyze license data from uploaded images. Compared extracted data with CSV records for validation.
+Enhanced the Lambda function to unzip files from S3, upload extracted contents, and parse filenames for downstream processing.
 
 **Expected Outcome:**  
-- Automated extraction of identity information.  
-- Improved accuracy by cross-checking with CSV data.
+- Automated extraction and upload of onboarding files  
+- Proper file organization in S3  
+- Metadata prepared for next steps  
+
+---
+
+### ✅ Lab 4 – Parse Customer Metadata from CSV
+
+**Goal:**  
+Extract and store customer metadata from CSV files in DynamoDB.
+
+**Description:**  
+Parsed CSV inside uploaded `.zip` files to extract customer details and stored them in the DynamoDB table.
+
+**Expected Outcome:**  
+- Structured metadata ingestion  
+- Customer data persisted for processing  
+
+---
+
+### ✅ Lab 5 – Integrate Amazon Textract for License Data Extraction
+
+**Goal:**  
+Extract driver’s license information using Amazon Textract.
+
+**Description:**  
+Integrated AnalyzeID API from Textract to extract and validate license data against CSV records.
+
+**Expected Outcome:**  
+- Automated extraction of identity info  
+- Improved validation accuracy  
 
 ---
 
 ### ✅ Lab 6 – Textract Analysis, SNS Notification, and DynamoDB Update
-Goal:
-Leverage AWS SDK to analyze ID documents, notify stakeholders via SNS, and update customer metadata in DynamoDB.
 
-Highlights:
-
-Configured IAM role with textract:AnalyzeID permissions.
-
-Used Boto3 to perform Textract analysis on license images.
-
-Published onboarding results to an SNS topic.
-
-Updated customer records in DynamoDB based on extracted ID details.
-
-
-### ✅ Lab 9 - [Your Lab 9 Title Here]
-
----
 **Goal:**  
-Briefly state the objective of Lab 9.
+Analyze ID documents, notify stakeholders, and update metadata.
 
 **Description:**  
-Explain what you built or worked on in Lab 9.
+Used AWS SDK and Boto3 to perform Textract analysis, publish results to SNS, and update DynamoDB.
 
 **Expected Outcome:**  
-Summarize what Lab 9 delivers or accomplishes.
+- Automated document analysis  
+- Real-time notifications  
+- Updated customer metadata  
 
 ---
 
-### ✅ Lab 9 Progress
+### ✅ Lab 9 – Asynchronous Lambda Function Decomposition with Step Functions Preparation
 
--### ✅ Lab 9 – Asynchronous Lambda Function Decomposition with Step Functions Preparation
+**Goal:**  
+Refactor the synchronous document Lambda function into multiple asynchronous Lambda functions orchestrated by AWS Step Functions.
 
----
+**Description:**  
+Decomposed the monolithic Lambda function into four smaller functions, each handling a distinct task in the onboarding workflow:
 
-**Lab Environment**
+- **UnzipLambdaFunction:** Downloads and extracts zipped files from S3.
+- **WriteToDynamoLambdaFunction:** Reads CSV and writes customer data to DynamoDB.
+- **CompareFacesLambdaFunction:** Uses Amazon Rekognition to compare photos and updates DynamoDB.
+- **CompareDetailsLambdaFunction:** Uses Amazon Textract to extract and validate license details.
 
-In this lab, the goal was to refactor the existing synchronous document Lambda function into multiple smaller Lambda functions that can run asynchronously. This prepares the solution for orchestration with AWS Step Functions in the next lab.
-
-**Summary of tasks your document Lambda function performed synchronously:**
-
-- Download and unzip files from the `zipped/` S3 prefix, uploading extracted files to `unzipped/` prefix.
-- Parse and write customer metadata from CSV files to DynamoDB.
-- Compare faces between selfie and license images using Amazon Rekognition.
-- Compare license details using Amazon Textract.
-- Send license info to a third-party API via SQS (implemented later).
-
-The senior developer suggested decomposing these tasks into individual Lambda functions, each responsible for one task, and orchestrated by Step Functions.
+**Expected Outcome:**  
+- Modular, maintainable, asynchronous Lambda functions  
+- Preparation for Step Functions orchestration  
 
 ---
 
-### Lab 9 Tasks:
+## Lab 9 Tasks
 
-**Task 1:** Develop the **UnzipLambdaFunction**
-
-- Downloads compressed files from `zipped/` prefix in S3.
-- Extracts files and uploads to `unzipped/` prefix.
-- Extracts the `app-uuid` from files for downstream processing.
-
-**Task 2:** Develop the **WriteToDynamoLambdaFunction**
-
-- Reads and parses customer CSV files.
-- Writes customer metadata to DynamoDB under the `app-uuid` hash key.
-
-**Task 3:** Develop the **CompareFacesLambdaFunction**
-
-- Uses Amazon Rekognition to compare selfie and license photos.
-- Updates DynamoDB with face match results.
-- Sends SNS notification on failure.
-
-**Task 4:** Develop the **CompareDetailsLambdaFunction**
-
-- Uses Amazon Textract to extract license details.
-- Compares extracted details with DynamoDB data.
-- Updates DynamoDB with comparison results.
-- Sends SNS notification on failure.
+| Task # | Lambda Function                | Description                                                        |
+|--------|-------------------------------|--------------------------------------------------------------------|
+| 1      | UnzipLambdaFunction            | Download, unzip, and upload files; extract `app_uuid`.             |
+| 2      | WriteToDynamoLambdaFunction    | Parse CSV and write customer metadata to DynamoDB.                 |
+| 3      | CompareFacesLambdaFunction     | Use Rekognition to compare photos; update DynamoDB and notify SNS. |
+| 4      | CompareDetailsLambdaFunction   | Use Textract to extract license info; validate and update DynamoDB.|
 
 ---
 
-### Lab Outcome:
+## Deployment and Testing
 
-- Decomposed a monolithic Lambda function into four specialized Lambda functions.
-- Prepared codebase for integration with AWS Step Functions state machine (next lab).
-- Gained experience in asynchronous workflows and Lambda function modularization.
+- IAM roles and permissions are preconfigured for each Lambda function.
+- Use the AWS CLI or Cloud9 environment to invoke functions with sample payloads for testing.
+- Deploy Lambda functions using the following commands inside your Cloud9 terminal:
+
+```bash
+sam build
+sam deploy
+````
+
+* Monitor Lambda function logs with:
+
+```bash
+aws logs tail /aws/lambda/<FunctionName>
+```
 
 ---
 
-### Notes:
+## Repo Structure (Example)
 
-- IAM roles and permissions for each Lambda function were preconfigured.
-- Lambda functions can be tested individually with sample payloads using AWS CLI.
-- Cloud9 environment includes starter `app.py` files for each Lambda function.
-- Use `sam build && sam deploy` commands to deploy functions.
+```
+/DocumentLambdaFunction
+/UnzipLambdaFunction
+/WriteToDynamoLambdaFunction
+/CompareFacesLambdaFunction
+/CompareDetailsLambdaFunction
+/README.md
+/template.yaml
+/samconfig.toml
+```
 
 ---
 
-*(Add links or references to your Lambda function folders and code files here if desired.)*
+## Additional Notes
+
+* This project is for educational purposes; do not use real customer data.
+* Future labs will add full Step Functions workflow and third-party license validation.
+* For questions or collaboration, please open an issue or contact me.
+
+---
+Awesome! Let’s add clear, concise **deployment** and **testing** instructions with sample commands, plus a **workflow automation snippet** for your README. This will make it super easy for you or anyone else to build, deploy, and test your Lambda functions step-by-step.
+
+---
+
+### Deployment & Testing Instructions (to add after your Lab 9 section)
+
+````markdown
+## 🚀 Deployment & Testing Instructions
+
+### Prerequisites
+- AWS CLI installed and configured with appropriate permissions.
+- AWS SAM CLI installed.
+- AWS Cloud9 environment (optional but recommended).
+
+---
+
+### Build and Deploy All Lambda Functions
+
+Run these commands inside your project root directory where your `template.yaml` is located:
+
+```bash
+sam build
+sam deploy --guided
+````
+
+* The `--guided` flag walks you through configuration the first time.
+* This will package, deploy your Lambda functions, and create/update resources on AWS.
+
+---
+
+### Invoke Lambda Functions Manually for Testing
+
+You can test each Lambda function with sample payloads like these (replace `YOUR_BUCKET_NAME` and function names as needed):
+
+**UnzipLambdaFunction:**
+
+```bash
+aws lambda invoke --function-name UnzipLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"detail": {"bucket": {"name": "YOUR_BUCKET_NAME"}, "object": {"key": "zipped/8d247914.zip"}}}' response1.json
+cat response1.json
+```
+
+**WriteToDynamoLambdaFunction:**
+
+```bash
+aws lambda invoke --function-name WriteToDynamoLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"detail": {"bucket": {"name": "YOUR_BUCKET_NAME"}}, "application": {"app_uuid": "8d247914"}}' response2.json
+cat response2.json
+```
+
+**CompareFacesLambdaFunction:**
+
+```bash
+aws lambda invoke --function-name CompareFacesLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"detail": {"bucket": {"name": "YOUR_BUCKET_NAME"}}, "application": {"app_uuid": "8d247914"}}' response3.json
+cat response3.json
+```
+
+**CompareDetailsLambdaFunction:**
+
+```bash
+aws lambda invoke --function-name CompareDetailsLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"detail": {"bucket": {"name": "YOUR_BUCKET_NAME"}}, "application": {"app_uuid": "8d247914"}}' response4.json
+cat response4.json
+```
+
+---
+
+### Monitor Logs
+
+To view the logs of any Lambda function, run:
+
+```bash
+aws logs tail /aws/lambda/<FunctionName> --follow
+```
+
+Replace `<FunctionName>` with the actual function name (e.g., `UnzipLambdaFunction`).
+
+---
+
+## ⚙️ Automating Workflow with GitHub Actions (Optional)
+
+You can automate build and deploy with this simple GitHub Actions workflow. Save this as `.github/workflows/deploy.yml` in your repo:
+
+```yaml
+name: Build and Deploy Lambda Functions
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2  # change to your region
+
+    - name: Install AWS SAM CLI
+      run: |
+        sudo pip install aws-sam-cli
+
+    - name: Build SAM app
+      run: sam build
+
+    - name: Deploy SAM app
+      run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name KYCStack --capabilities CAPABILITY_IAM
+```
+
+* Add your AWS credentials as GitHub repository secrets (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`).
+* Adjust region and stack name as needed.
+* On every push to master, your app will build and deploy automatically.
+
+---
+
+
