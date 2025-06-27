@@ -298,5 +298,140 @@ jobs:
 * On every push to master, your app will build and deploy automatically.
 
 ---
+✅ Lab 10 – Step Functions + X-Ray Tracing
+Goal:
+Orchestrate the onboarding process using AWS Step Functions and enable AWS X-Ray tracing for end-to-end visibility and performance monitoring.
 
+Description:
+
+Created and deployed the DocumentStateMachine using AWS Step Functions.
+
+Enabled X-Ray tracing on:
+
+The Step Functions state machine
+
+All Lambda functions involved in the workflow
+
+Confirmed event-driven transitions between:
+
+UnzipLambdaFunction
+
+WriteToDynamoLambdaFunction
+
+CompareFacesLambdaFunction
+
+CompareDetailsLambdaFunction
+
+Monitored and validated execution flow using:
+
+AWS Step Functions Execution Graph
+
+AWS CloudWatch Logs
+
+AWS X-Ray Trace Maps
+
+Expected Outcome:
+
+Seamless orchestration of onboarding tasks using Step Functions
+
+Enhanced observability with traceable Lambda executions and service transitions
+
+Reduced debugging time and improved insight into errors, latencies, and bottlenecks
+
+✅ Final Project Outcome
+🎉 Congratulations! All 10 Labs of the KYC onboarding solution have been successfully implemented and validated.
+You’ve built a production-grade, event-driven, AI-powered, serverless application that mimics a real-world customer onboarding process using:
+
+Amazon S3 for secure file storage
+
+AWS Lambda for microservices
+
+Amazon Rekognition for face comparison
+
+Amazon Textract for identity document analysis
+
+Amazon DynamoDB for metadata storage
+
+Amazon SNS for notifications
+
+AWS Step Functions for orchestration
+
+AWS X-Ray for tracing and debugging
+
+Let me know if you'd like me to insert this into your GitHub repo automatically via CLI or help you with a final git push now that everything is working!
+
+
+
+
+
+
+
+
+You said:
+make it first person so employers can see it like i did it
+
+
+ChatGPT said:
+Of course, Hiwot! Here’s Lab 10 rewritten in first person so it sounds like you completed the work — perfect for employers, your instructor, or portfolio reviewers.
+
+You can copy and paste this directly into your README.md under Lab 9.
+
+✅ Lab 10 – Step Functions + X-Ray Tracing
+Goal:
+To orchestrate the full onboarding workflow using AWS Step Functions and enable AWS X-Ray for full visibility and performance tracing.
+
+What I Did:
+
+I created and deployed the DocumentStateMachine using AWS Step Functions to coordinate the Lambda functions I developed in earlier labs.
+
+I enabled X-Ray tracing on the Step Functions state machine as well as on all participating Lambda functions to monitor and debug the workflow.
+
+The workflow included:
+
+UnzipLambdaFunction – Extract customer files from uploaded .zip
+
+SubmitLicenseLambdaFunction – Extract text using Textract
+
+CompareFacesLambdaFunction – Compare submitted face with license photo using Rekognition
+
+CompareDetailsLambdaFunction – Match extracted identity fields
+
+WriteToDynamoLambdaFunction – Store validated data in DynamoDB
+
+I tested the workflow using zipped sample documents and validated success via:
+
+Step Functions Execution History
+
+CloudWatch Logs
+
+X-Ray Service Maps and Trace Details
+
+What I Achieved:
+
+Successfully built and orchestrated an end-to-end serverless onboarding pipeline.
+
+Enabled clear, visual tracing of each function's performance and any errors.
+
+Gained hands-on experience monitoring distributed microservices using AWS Step Functions and X-Ray.
+
+✅ Final Project Summary
+🎉 I completed all 10 labs of this Know Your Customer (KYC) onboarding application as part of the AWS Cloud Application Developer program. The final solution simulates a real-world onboarding system for a bank, using a modern, event-driven, serverless architecture powered by:
+
+Amazon S3 – Secure file storage
+
+AWS Lambda – Stateless compute functions
+
+Amazon Rekognition – Facial verification
+
+Amazon Textract – Document data extraction
+
+Amazon DynamoDB – Metadata storage
+
+Amazon SNS – Notifications
+
+AWS Step Functions – Workflow orchestration
+
+AWS X-Ray – Observability and tracing
+
+Through this capstone, I strengthened my ability to design, build, and monitor production-ready cloud-native applications using AWS services.
 
