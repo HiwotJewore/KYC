@@ -187,7 +187,66 @@ template.yaml with the new Lambda and API definitions
 This lab simulated a real-world third-party license verification service using Lambda and integrated it with a RESTful HTTP API. The API Gateway successfully triggered the Lambda function with expected True and False responses, preparing the system for full KYC flow integration in the next lab.
 
 
----
+✅ Lab 8 - Submit License Lambda Function
+Goal:
+In this lab, I created and deployed a new AWS Lambda function named SubmitLicenseLambdaFunction to handle incoming driver license validation requests via Amazon SQS. This function integrates with a previously created validation system, completing a multi-step processing pipeline.
+
+🛠️ What I Did
+Created the Function Directory and Code File
+
+bash
+Copy
+Edit
+mkdir SubmitLicenseLambdaFunction
+touch SubmitLicenseLambdaFunction/app.py
+Wrote the Lambda handler
+In app.py, I implemented the lambda_handler function to receive and log SQS messages with license data.
+
+Prepared for SAM Build & Deploy
+
+Added requirements.txt (left empty for now)
+
+Ran sam build && sam deploy successfully.
+
+Verified Deployment
+
+Confirmed the new Lambda function and SQS trigger were successfully created via CloudFormation.
+
+Sent Test Messages to SQS
+
+bash
+Copy
+Edit
+QueueUrl=$(aws sqs get-queue-url --queue-name LicenseQueue --output text)
+aws sqs send-message --queue-url $QueueUrl --message-body '{"driver_license_id": "S123456579010", "validation_override": true, "uuid": "8d247914"}'
+aws sqs send-message --queue-url $QueueUrl --message-body '{"driver_license_id": "S123456579010", "validation_override": false, "uuid": "8d247914"}'
+Rebuilt and Deployed Multiple Times
+
+Continued testing and updating until the full pipeline worked as expected.
+
+📁 Project Structure
+Copy
+Edit
+SubmitLicenseLambdaFunction/
+├── app.py
+├── requirements.txt
+✅ Outcome
+The SubmitLicenseLambdaFunction was successfully integrated into the kyc-app SAM stack.
+
+Incoming messages from the SQS queue now trigger the Lambda function.
+
+All services (S3, Lambda, SQS, and CloudFormation) worked together smoothly.
+
+🔗 AWS Services Used
+Lambda for event processing
+
+SQS for message queuing
+
+CloudFormation via AWS SAM for deployment
+
+S3 for deployment artifact storage
+
+
 
 ### ✅ Lab 9 – Asynchronous Lambda Function Decomposition with Step Functions Preparation
 
