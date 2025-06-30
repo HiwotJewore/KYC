@@ -435,3 +435,7 @@ AWS X-Ray – Observability and tracing
 
 Through this capstone, I strengthened my ability to design, build, and monitor production-ready cloud-native applications using AWS services.
 
+### ✅ Lab 7 - Validate License Lambda and API Gateway
+
+Created a mock Lambda function (`ValidateLicenseLambdaFunction`) that simulates license validation based on override input. Integrated it with API Gateway for POST requests and tested with curl commands.
+
