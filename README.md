@@ -98,6 +98,94 @@ Used AWS SDK and Boto3 to perform Textract analysis, publish results to SNS, and
 - Automated document analysis  
 - Real-time notifications  
 - Updated customer metadata  
+✅ Lab 7 – License Validation Lambda and API Gateway Integration
+In Lab 7, I created a mock backend service for validating driver’s licenses using AWS Lambda and connected it with an HTTP API using Amazon API Gateway. This simulates a third-party license verification API to support document validation in a real-world Know Your Customer (KYC) workflow.
+
+🔧 What I built
+A Lambda function named ValidateLicenseLambdaFunction
+
+A new folder: ValidateLicenseLambdaFunction/app.py
+
+Python runtime: python3.12
+
+The Lambda function simulates valid or invalid license checks based on an override parameter in the request body
+
+An HTTP API using Amazon API Gateway:
+
+Name: ValidateLicenseApi
+
+Path: /license
+
+Method: POST
+
+Connected the API Gateway to trigger the Lambda function
+
+💻 Code written in Cloud9
+bash
+Copy code
+# Step 1: Create folder and app.py file
+mkdir ValidateLicenseLambdaFunction
+touch ValidateLicenseLambdaFunction/app.py
+
+# Step 2: Python code for Lambda (ValidateLicenseLambdaFunction/app.py)
+# ------------------------------------------
+import json
+
+def lambda_handler(event, context):
+    body = event['body']
+    body_json = json.loads(body)
+    override_parameter = body_json['validation_override']
+
+    response = {
+        'statusCode': 200,
+        'body': override_parameter
+    }
+    return response
+# ------------------------------------------
+
+# Step 3: Update template.yaml to include the new Lambda and API
+# (Included in Lab7 folder as template.yaml)
+
+# Step 4: Deploy using AWS SAM
+sam build && sam deploy
+
+# Step 5: Invoke directly to test
+aws lambda invoke --function-name ValidateLicenseLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"body": "{\"driver_license_id\": \"S123456579010\", \"validation_override\": true}"}' response.json
+
+cat response.json
+# Output: {"statusCode": 200, "body": true}
+
+aws lambda invoke --function-name ValidateLicenseLambdaFunction \
+--cli-binary-format raw-in-base64-out \
+--payload '{"body": "{\"driver_license_id\": \"S123456579010\", \"validation_override\": false}"}' response.json
+
+cat response.json
+# Output: {"statusCode": 200, "body": false}
+🌐 Testing via API Gateway
+bash
+Copy code
+# Set API endpoint from deployed output
+API_ENDPOINT_URL=https://52s88ikq4b.execute-api.us-west-2.amazonaws.com//license
+
+# Valid license test
+curl -X POST -H 'Content-Type: application/json' \
+-d '{"driver_license_id": "S123456579010", "validation_override": "True"}' $API_ENDPOINT_URL
+# Output: True
+
+# Invalid license test
+curl -X POST -H 'Content-Type: application/json' \
+-d '{"driver_license_id": "S123456579010", "validation_override": "False"}' $API_ENDPOINT_URL
+# Output: False
+📁 Files added in Lab7/
+ValidateLicenseLambdaFunction/app.py
+
+template.yaml with the new Lambda and API definitions
+
+✅ Outcome
+This lab simulated a real-world third-party license verification service using Lambda and integrated it with a RESTful HTTP API. The API Gateway successfully triggered the Lambda function with expected True and False responses, preparing the system for full KYC flow integration in the next lab.
+
 
 ---
 
